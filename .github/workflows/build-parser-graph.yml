@@ -1,0 +1,26 @@
+name: Build Parser Graph
+on: push
+jobs:
+  build-parser-graph:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Installation depends
+      run: |
+        sudo add-apt-repository -y ppa:dreibh/ppa
+        sudo apt update
+        sudo apt install -y p4lang-p4c graphviz
+    - name: Clone source code
+      run: |
+        git clone https://github.com/AshLeung/p4-parser.git
+    - name: Build P4 Parser Graph
+      run: |
+        cd p4-parser
+        mkdir builds
+        cd builds
+        p4c-graphs ../src/p4/upf_parser.p4
+        dot -Tpng ParserPipe.dot > ParserPipe.png
+    - name: Upload artifact
+      uses: actions/upload-artifact@master
+      with:
+        name: parser-graph
+        path: p4-parser/builds
